@@ -5,7 +5,9 @@ import "CoreLibs/timer"
 
 -- Globals
 local gfx <const> = playdate.graphics
+local logoSprite = nil
 introDrawableLocations = {}
+
 
 function createIntroScreenItem()
 	local x = 400 + math.random(50)
@@ -13,22 +15,46 @@ function createIntroScreenItem()
 	local width = 100 + math.random(50)
 	local height = 30 + math.random(30)
 	local speed = 3 + math.random(20)
-	
+
 	return { x = x, y = y, width = width, height = height, speed = speed }
 end
 
 -- Init
 function gameInit()
+	-- load images
+	local logoImage = gfx.image.new("resources/logo")
+	assert(logoImage)
+	logoSprite = gfx.sprite.new(logoImage)
+	logoSprite:moveTo(112, 185)
+	logoSprite:add()
+
 	gfx.setBackgroundColor(gfx.kColorWhite)
-	
-	for i = 1, 30 do
+
+	for i = 1, 35 do
 		introDrawableLocations[i] = createIntroScreenItem()
 	end
+
+	gfx.sprite.setBackgroundDrawingCallback(
+		function()
+
+			local bgImage = gfx.image.new(400, 240)
+			gfx.pushContext(bgImage)
+
+			for i,loc in ipairs(introDrawableLocations) do
+				gfx.fillRect(loc.x, loc.y, loc.width, loc.height)
+			end
+			
+			gfx.fillRect(280, 20, 100, 40)
+
+			gfx.popContext()
+			bgImage:draw( 0, 0 )
+		end
+	)
 end
 
 gameInit()
 
--- Updateg
+-- Update
 function playdate.update()
 	introScreenUpdate()
 	introScreenDraw()
@@ -36,8 +62,8 @@ end
 
 function introScreenUpdate()
 	for i,loc in ipairs(introDrawableLocations) do
-  		loc.x -= loc.speed
-		  
+		loc.x -= loc.speed
+
 		if loc.x + loc.width < 0 then
 			introDrawableLocations[i] = createIntroScreenItem()
 		end
@@ -46,8 +72,5 @@ end
 
 function introScreenDraw()
 	gfx.clear()
-	
-	for i,loc in ipairs(introDrawableLocations) do
-	  gfx.fillRect(loc.x, loc.y, loc.width, loc.height)
-	end
+	gfx.sprite.update()
 end
