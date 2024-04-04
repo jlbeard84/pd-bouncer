@@ -5,7 +5,9 @@ import "CoreLibs/timer"
 
 -- Globals
 local gfx <const> = playdate.graphics
+local logoSprite = nil
 introDrawableLocations = {}
+
 
 function createIntroScreenItem()
 	local x = 400 + math.random(50)
@@ -19,6 +21,15 @@ end
 
 -- Init
 function gameInit()
+	-- load images
+	local logoImage = gfx.image.new("resources/logo")
+	assert(logoImage)
+	logoSprite = gfx.sprite.new(logoImage)
+	logoSprite:moveTo(112, 185)
+	logoSprite:add()
+	gfx.sprite.setAlwaysRedraw(true)
+	logoSprite:setZIndex(32767)
+	
 	gfx.setBackgroundColor(gfx.kColorWhite)
 	
 	for i = 1, 30 do
@@ -28,7 +39,7 @@ end
 
 gameInit()
 
--- Updateg
+-- Update
 function playdate.update()
 	introScreenUpdate()
 	introScreenDraw()
@@ -50,4 +61,6 @@ function introScreenDraw()
 	for i,loc in ipairs(introDrawableLocations) do
 	  gfx.fillRect(loc.x, loc.y, loc.width, loc.height)
 	end
+	
+	gfx.sprite.update()
 end
