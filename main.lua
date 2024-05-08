@@ -1,13 +1,13 @@
 import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
+import "CoreLibs/animation"
 import "CoreLibs/timer"
 
 -- Globals
 local gfx <const> = playdate.graphics
-local logoSprite = nil
+--local startSpriteBlinker = nil
 introDrawableLocations = {}
-
 
 function createIntroScreenItem()
 	local x = 400 + math.random(50)
@@ -24,10 +24,19 @@ function gameInit()
 	-- load images
 	local logoImage = gfx.image.new("resources/logo")
 	assert(logoImage)
-	logoSprite = gfx.sprite.new(logoImage)
+	local logoSprite = gfx.sprite.new(logoImage)
 	logoSprite:moveTo(112, 185)
 	logoSprite:add()
-
+	
+	local startImage = gfx.image.new("resources/start")
+	assert(startImage)
+	local startSprite = gfx.sprite.new(startImage)
+	startSprite:moveTo(330, 40)
+	startSprite:add()
+	
+	--startSpriteBlinker = playdate.graphics.animation.blinker.new()
+	--startSprite:setAnimator(startSpriteBlinker)
+	
 	gfx.setBackgroundColor(gfx.kColorWhite)
 
 	for i = 1, 35 do
@@ -68,6 +77,8 @@ function introScreenUpdate()
 			introDrawableLocations[i] = createIntroScreenItem()
 		end
 	end
+	
+	--playdate.graphics.animation.blinker.updateAll()
 end
 
 function introScreenDraw()
