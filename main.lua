@@ -6,7 +6,8 @@ import "CoreLibs/timer"
 
 -- Globals
 local gfx <const> = playdate.graphics
---local startSpriteBlinker = nil
+local startSpriteBlinker = nil
+local startSprite = nil
 introDrawableLocations = {}
 
 function createIntroScreenItem()
@@ -30,12 +31,13 @@ function gameInit()
 	
 	local startImage = gfx.image.new("resources/start")
 	assert(startImage)
-	local startSprite = gfx.sprite.new(startImage)
+	
+	startSprite = gfx.sprite.new(startImage)
 	startSprite:moveTo(330, 40)
 	startSprite:add()
 	
-	--startSpriteBlinker = playdate.graphics.animation.blinker.new()
-	--startSprite:setAnimator(startSpriteBlinker)
+	startSpriteBlinker = playdate.graphics.animation.blinker.new()
+	startSpriteBlinker:start(500, 500, true)
 	
 	gfx.setBackgroundColor(gfx.kColorWhite)
 
@@ -78,7 +80,11 @@ function introScreenUpdate()
 		end
 	end
 	
-	--playdate.graphics.animation.blinker.updateAll()
+	if startSprite ~= nil then
+		startSprite:setVisible(startSpriteBlinker.on)
+	end
+	
+	playdate.graphics.animation.blinker.updateAll()
 end
 
 function introScreenDraw()
